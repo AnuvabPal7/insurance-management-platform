@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: insurance-management-platform
+  datasource:
+    url: jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?sslmode=require&user=postgres.rjwwuoeyyqscabwhtbco&password=${IMP_DB_PASSWORD}&prepareThreshold=0
+    username: postgres.rjwwuoeyyqscabwhtbco
+    password: ${IMP_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+server:
+  port: 8081
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+
+app:
+  upload-dir: ./uploads
+  reports-dir: ./reports

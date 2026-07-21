@@ -1,0 +1,21 @@
+# Maven
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Uploads/reports (runtime-generated, not source)
+uploads/
+reports/
+
+# Environment files (if you ever add a local .env)
+.env
