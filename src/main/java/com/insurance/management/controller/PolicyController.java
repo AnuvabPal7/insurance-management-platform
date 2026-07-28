@@ -2,6 +2,7 @@ package com.insurance.management.controller;
 
 import com.insurance.management.dto.*;
 import com.insurance.management.entity.PolicyStatus;
+import com.insurance.management.entity.PolicyType;
 import com.insurance.management.service.PolicyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,18 @@ public class PolicyController {
     @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
     public ResponseEntity<List<PolicyResponse>> getAll() {
         return ResponseEntity.ok(policyService.getAll());
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    public ResponseEntity<PageResponse<PolicyResponse>> search(
+            @RequestParam(required = false) PolicyStatus status,
+            @RequestParam(required = false) PolicyType policyType,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdOn") String sortBy) {
+        return ResponseEntity.ok(policyService.search(status, policyType, keyword, page, size, sortBy));
     }
 
     @GetMapping("/{id}")

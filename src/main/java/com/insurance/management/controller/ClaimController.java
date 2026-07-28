@@ -1,6 +1,7 @@
 package com.insurance.management.controller;
 
 import com.insurance.management.dto.*;
+import com.insurance.management.entity.ClaimStatus;
 import com.insurance.management.service.ClaimService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,17 @@ public class ClaimController {
     @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
     public ResponseEntity<List<ClaimResponse>> getAll() {
         return ResponseEntity.ok(claimService.getAll());
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    public ResponseEntity<PageResponse<ClaimResponse>> search(
+            @RequestParam(required = false) ClaimStatus status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "filedOn") String sortBy) {
+        return ResponseEntity.ok(claimService.search(status, keyword, page, size, sortBy));
     }
 
     @GetMapping("/{id}")

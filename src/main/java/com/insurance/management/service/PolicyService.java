@@ -4,10 +4,15 @@ import com.insurance.management.dto.*;
 import com.insurance.management.entity.Customer;
 import com.insurance.management.entity.Policy;
 import com.insurance.management.entity.PolicyStatus;
+import com.insurance.management.entity.PolicyType;
 import com.insurance.management.exception.ApiException;
 import com.insurance.management.repository.CustomerRepository;
 import com.insurance.management.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -97,6 +102,33 @@ public class PolicyService {
             throw new ApiException("Policy not found", HttpStatus.NOT_FOUND);
         }
         policyRepository.deleteById(id);
+    }
+
+    public PageResponse<PolicyResponse> search(PolicyStatus status, PolicyType policyType,
+                                                String keyword, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        Page<Policy> result;
+
+        if (keyword != null && !keyword.isBlank()) {
+            result = policyRepository.findByPolicyNameContainingIgnoreCase(keyword, pageable);
+        } else if (status != null && policyType != null) {
+            result = policyRepository.findByStatusAndPolicyType(status, policyType, pageable);
+        } else if (status != null) {
+            result = policyRepository.findByStatus(status, pageable);
+        } else if (policyType != null) {
+            result = policyRepository.findByPolicyType(policyType, pageable);
+        } else {
+            result = policyRepository.findAll(pageable);
+        }
+
+        return PageResponse.<PolicyResponse>builder()
+                .content(result.getContent().stream().map(this::toResponse).toList())
+                .pageNumber(result.getNumber())
+                .pageSize(result.getSize())
+                .totalElements(result.getTotalElements())
+                .totalPages(result.getTotalPages())
+                .last(result.isLast())
+                .build();
     }
 
     private PolicyResponse toResponse(Policy p) {

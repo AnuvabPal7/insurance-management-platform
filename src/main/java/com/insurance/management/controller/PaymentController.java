@@ -1,6 +1,7 @@
 package com.insurance.management.controller;
 
 import com.insurance.management.dto.*;
+import com.insurance.management.entity.PaymentStatus;
 import com.insurance.management.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,16 @@ public class PaymentController {
     @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
     public ResponseEntity<List<PaymentResponse>> getAll() {
         return ResponseEntity.ok(paymentService.getAll());
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    public ResponseEntity<PageResponse<PaymentResponse>> search(
+            @RequestParam(required = false) PaymentStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "dueDate") String sortBy) {
+        return ResponseEntity.ok(paymentService.search(status, page, size, sortBy));
     }
 
     @GetMapping("/overdue")

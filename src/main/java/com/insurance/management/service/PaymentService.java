@@ -8,6 +8,10 @@ import com.insurance.management.exception.ApiException;
 import com.insurance.management.repository.PaymentRepository;
 import com.insurance.management.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -91,6 +95,22 @@ public class PaymentService {
             throw new ApiException("Payment not found", HttpStatus.NOT_FOUND);
         }
         paymentRepository.deleteById(id);
+    }
+
+    public PageResponse<PaymentResponse> search(PaymentStatus status, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        Page<Payment> result = status != null
+                ? paymentRepository.findByStatus(status, pageable)
+                : paymentRepository.findAll(pageable);
+
+        return PageResponse.<PaymentResponse>builder()
+                .content(result.getContent().stream().map(this::toResponse).toList())
+                .pageNumber(result.getNumber())
+                .pageSize(result.getSize())
+                .totalElements(result.getTotalElements())
+                .totalPages(result.getTotalPages())
+                .last(result.isLast())
+                .build();
     }
 
     private PaymentResponse toResponse(Payment p) {
