@@ -23,7 +23,12 @@ public class AuthService {
             throw new ApiException("Email already registered", HttpStatus.CONFLICT);
         }
 
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ApiException("Username already taken", HttpStatus.CONFLICT);
+        }
+
         User user = User.builder()
+                .username(request.getUsername())
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))

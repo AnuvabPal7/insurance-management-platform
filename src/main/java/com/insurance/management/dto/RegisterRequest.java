@@ -7,6 +7,11 @@ import lombok.Data;
 @Data
 public class RegisterRequest {
 
+    @NotBlank(message = "Username is required")
+    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]{2,19}$",
+             message = "Username must start with a letter and be 3-20 characters (letters, numbers, underscore only)")
+    private String username;
+
     @NotBlank(message = "Name is required")
     private String name;
 
