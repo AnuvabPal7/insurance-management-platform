@@ -1,4 +1,3 @@
-$content = @"
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 COPY .mvn/ .mvn
@@ -12,5 +11,3 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]
-"@
-[System.IO.File]::WriteAllText("D:\insurance-management-platform\Dockerfile", $content, [System.Text.UTF8Encoding]::new($false))
